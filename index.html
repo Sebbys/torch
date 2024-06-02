@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Cost Prediction</title>
+    <style>
+        /* ... rest of your CSS styles ... */
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="LOGO_Jais(Bi-Lingual).png" alt="RGIPT Logo" class="company-logo">
+        <span class="company-name">RGIPT Health Club</span>
+    </div>
+
+    <div class="container">
+        <h1>Insurance Cost Prediction</h1>
+        
+        <p class="welcome-message">Welcome to our RGIPT Health Club! We believe that health insurance and insurance, in general, are indispensable pillars of financial security and well-being. In an uncertain world, these safeguards provide peace of mind, ensuring that unexpected medical expenses or unforeseen circumstances don't derail your financial stability. Explore our resources to understand the vital role insurance plays in safeguarding your health and future.</p>
+        <div id="imagePreviewContainer"></div>
+        <form id="predictionForm" enctype="multipart/form-data">
+            <label for="image">Upload an image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+
+            <button type="submit">Predict Cost</button>
+        </form>
+        <p class="result" id="predictionResult"></p>
+    </div>
+
+    <script>
+
+
+function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var imagePreviewContainer = document.getElementById('imagePreviewContainer');
+                // Remove previous preview if exists
+                imagePreviewContainer.innerHTML = '';
+                // Create new image element
+                var imgElement = document.createElement('img');
+                imgElement.src = reader.result;
+                imgElement.style.maxWidth = '100%';
+                // Append image element to the container
+                imagePreviewContainer.appendChild(imgElement);
+            }
+            // Read the selected file as Data URL
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Add event listener to the file input to trigger previewImage function
+        document.getElementById('image').addEventListener('change', previewImage);
+
+// Dont Touch THis CODe PLEAASe
+        document.getElementById('predictionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('predictionResult').innerText = `Error: ${data.error}`;
+                } else {
+                    const tyreStatus = data.prediction; // Treat prediction as a string
+                    document.getElementById('predictionResult').innerText = `Tyre Status: ${tyreStatus}`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
